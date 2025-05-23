@@ -1,0 +1,14 @@
+body{
+    background-color: #ddd;
+    height: 100vh;
+    overflow: hidden;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+h1{
+    color: #eee;
+}

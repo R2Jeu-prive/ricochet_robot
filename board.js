@@ -63,6 +63,17 @@ function initBoard(){
     board.walls.push({x:3,y:14,type:H});
     board.walls.push({x:10,y:14,type:H});
 
+    board.vWalls = Array.from({length: 18}, (_, i) => []);
+    board.hWalls = Array.from({length: 18}, (_, i) => []);
+
+    board.walls.forEach(wall => {
+        if(wall.type == H){
+            board.hWalls[wall.x].push(wall.y);
+        }else{
+            board.vWalls[wall.y].push(wall.x);
+        }
+    });
+
     board.goals = Array.from({length: 17}, (_, i) => ({x: 0, y: 0}));
     board.goals[VOID] = {x: 9, y: 11};
 

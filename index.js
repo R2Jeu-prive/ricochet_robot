@@ -21,6 +21,13 @@ window.addEventListener("load", () => {
     buildConnections();
     drawCanvas();
 
-    let ini = new GameState([{x:8,y:8},{x:8,y:9},{x:1,y:15},{x:9,y:8},{x:9,y:9}],[]);
-    console.log(ini.Solve(MOON+GREEN, 8));
+    let ini = new GameState([{x:1,y:1},{x:1,y:14},{x:1,y:15},{x:15,y:15},{x:15,y:1}],[]);
+    /*ini.Move(GREEN, DOWN);
+    ini.Move(GREEN, RIGHT);
+    ini.Move(GREEN, UP);
+    ini.Move(GREEN, LEFT);
+    ini.Move(GREEN, DOWN);
+    ini.Move(GREEN, RIGHT);*/
+    drawCanvas(ini);
+    console.log(Solve(ini, MOON+GREEN, 7));
 });

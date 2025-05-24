@@ -28,6 +28,14 @@ function buildConnections(){
     }
 }
 
+function EncodeRobots(robots){
+    let i = 0;
+    for(let color = 0; color < 5; color++){
+        i += (gridSize*robots[color].x + robots[color].y)*Math.pow(gridSize*gridSize, color);
+    }
+    return i;
+}
+
 class GameState{
     constructor(robots, moves){
         this.robots = JSON.parse(JSON.stringify(robots));
@@ -36,37 +44,80 @@ class GameState{
 
     Move(movingColor, movingD){
         let movingRobot = this.robots[movingColor];
-        let start = this.robots[movingColor];
-        let end = connections[movingRobot.x][movingRobot.y][movingD];
-        let fastWarp = !this.robots.some(function(robot, color){
-            return (color != movingColor
-            && (
-                (movingD <= 1 && robot.x == movingRobot.x)
-                ||
-                (movingD >= 2 && robot.y == movingRobot.y)
-            ));
-        })
 
-        if(!fastWarp){
-            let max = end;
-            end = start;
-            for(let k = 0; k < 20; k++){
-                if(end.x == max.x && end.y == max.y){break;}
-                if(this.robots.some(function(robot, color){
-                    return (color != movingColor
-                        && robot.x == end.x + dirs[movingD].x
-                        && robot.y == end.y + dirs[movingD].y
-                    );
-                })){
-                    break;
+        if(movingD == UP){
+            let maxY = movingRobot.y;
+            let minY = 0;
+            board.hWalls[movingRobot.x].forEach(y => {
+                if(minY <= y && y < maxY){ minY = y+1; }
+            })
+            
+            for(let color = 0; color < 5; color++){
+                if(color == movingColor){continue;}
+                let blockX = this.robots[color].x;
+                let blockY = this.robots[color].y;
+
+                if(blockX == movingRobot.x && minY <= blockY && blockY < maxY){
+                    minY = blockY + 1;
                 }
-                end.x += dirs[movingD].x;
-                end.y += dirs[movingD].y;
             }
+            movingRobot.y = minY;
         }
-        this.robots[movingColor] = end;
+        if(movingD == LEFT){
+            let maxX = movingRobot.x;
+            let minX = 0;
+            board.vWalls[movingRobot.y].forEach(x => {
+                if(minX <= x && x < maxX){ minX = x+1; }
+            })
+            
+            for(let color = 0; color < 5; color++){
+                if(color == movingColor){continue;}
+                let blockX = this.robots[color].x;
+                let blockY = this.robots[color].y;
+
+                if(blockY == movingRobot.y && minX <= blockX && blockX < maxX){
+                    minX = blockX + 1;
+                }
+            }
+            movingRobot.x = minX;
+        }
+        if(movingD == DOWN){
+            let maxY = gridSize - 1;
+            let minY = movingRobot.y;
+            board.hWalls[movingRobot.x].forEach(y => {
+                if(minY <= y && y < maxY){ maxY = y; }
+            })
+            
+            for(let color = 0; color < 5; color++){
+                if(color == movingColor){continue;}
+                let blockX = this.robots[color].x;
+                let blockY = this.robots[color].y;
+
+                if(blockX == movingRobot.x && minY < blockY && blockY <= maxY){
+                    maxY = blockY - 1;
+                }
+            }
+            movingRobot.y = maxY;
+        }
+        if(movingD == RIGHT){
+            let maxX = gridSize - 1;
+            let minX = movingRobot.x;
+            board.vWalls[movingRobot.y].forEach(x => {
+                if(minX <= x && x < maxX){ maxX = x; }
+            })
+            
+            for(let color = 0; color < 5; color++){
+                if(color == movingColor){continue;}
+                let blockX = this.robots[color].x;
+                let blockY = this.robots[color].y;
+
+                if(blockY == movingRobot.y && minX < blockX && blockX <= maxX){
+                    maxX = blockX - 1;
+                }
+            }
+            movingRobot.x = maxX;
+        }
         this.moves.push({color:movingColor, dir:movingD});
-        return end.x == start.x && end.y == start.y;
     }
 
     CheckWin(goal){
@@ -77,18 +128,21 @@ class GameState{
         return this.robots[goalColor].x == board.goals[goal].x && this.robots[goalColor].y == board.goals[goal].y;
     }
 
-    Solve(goal, depth){
+    SolveTree(goal, depth){
         if(depth == 0){return false;}
+        
+        let stateKey = EncodeRobots(this.robots);
+        if(seenStates.has(stateKey)){return false;}
+        seenStates.set(stateKey, true);
+
+        console.log(this.moves);
 
         let newRobots = []; 
-        let nothingChanged = [];
         for(let color = 0; color <= 4; color++){
             newRobots.push([]);
-            nothingChanged.push([])
             for(let d = 0; d < 4; d++){
                 newRobots[color][d] = new GameState(this.robots, this.moves)
-                nothingChanged[color][d] = newRobots[color][d].Move(color, d);
-                if(nothingChanged[color][d]){continue;}
+                newRobots[color][d].Move(color, d);
                 let isWin = newRobots[color][d].CheckWin(goal);
                 if(isWin){return newRobots[color][d];}
             }
@@ -96,11 +150,48 @@ class GameState{
         
         for(let color = 0; color <= 4; color++){
             for(let d = 0; d < 4; d++){
-                if(nothingChanged[color][d]){continue;}
-                let winningRobots = newRobots[color][d].Solve(goal, depth-1);
-                if(winningRobots !== false){console.log(winningRobots); return winningRobots;}
+                let winningRobots = newRobots[color][d].SolveTree(goal, depth-1);
+                if(winningRobots !== false){return winningRobots;}
             }
         }
         return false;
     }
+}
+
+let seenStates = null;
+let todoStates = null;
+function Solve(startingState, goal, maxDepth){
+    seenStates = new Map();
+    todoStates = [startingState];
+    let checks = 0;
+    let loops = 0;
+
+    while(todoStates.length > 0){
+        loops++;
+        let state = todoStates.shift();
+
+        if(state.moves.length > maxDepth){continue;}
+
+        let stateKey = EncodeRobots(state.robots);
+        if(seenStates.has(stateKey)){continue;}
+        seenStates.set(stateKey, true);
+
+        checks ++;
+        if(state.CheckWin(goal)){
+            console.log("checks", checks);
+            console.log("loops", loops);
+            return state;
+        }
+        
+        let i = 0;
+        for(let color = 0; color <= 4; color++){
+            for(let d = 0; d < 4; d++){
+                let newGameState = new GameState(state.robots, state.moves);
+                newGameState.Move(color, d);
+                todoStates.push(newGameState);
+                i++;
+            }
+        }
+    }
+    return false;
 }

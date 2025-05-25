@@ -1,159 +1,163 @@
-const UP = 0;
-const DOWN = 1;
-const LEFT = 2;
-const RIGHT = 3;
-
-let connections = [];
-
-const dirs = [
-    {x: 0, y: -1}, // UP
-    {x: 0, y: 1}, // DOWN
-    {x: -1, y: 0}, // LEFT
-    {x: 1, y: 0} // RIGHT
-];
-
-function buildConnections(){
-    for(let x = 1; x < gridSize-1; x++){
-        connections[x] = [];
-        for(let y = 1; y < gridSize-1; y++){
-            let raycast = [true, true, true, true];
-            connections[x][y] = Array.from({length: 4}, (_, i) => ({x: x, y: y}));
-            for(let k = 0; k < 20; k++){
-                if(raycast[RIGHT] && board.walls.some(wall => wall.x === x+k && wall.y === y && wall.type === V)){connections[x][y][RIGHT] = {x:x+k, y:y}; raycast[RIGHT] = false;}
-                if(raycast[DOWN] && board.walls.some(wall => wall.x === x && wall.y === y+k && wall.type === H)){connections[x][y][DOWN] = {x:x, y:y+k}; raycast[DOWN] = false;}
-                if(raycast[LEFT] && board.walls.some(wall => wall.x === x-k-1 && wall.y === y && wall.type === V)){connections[x][y][LEFT] = {x:x-k, y:y}; raycast[LEFT] = false;}
-                if(raycast[UP] && board.walls.some(wall => wall.x === x && wall.y === y-k-1 && wall.type === H)){connections[x][y][UP] = {x:x, y:y-k}; raycast[UP] = false;}
-            }
-        }
-    }
-}
-
 function EncodeRobots(robots){
     let i = 0;
-    for(let color = 0; color < 5; color++){
-        i += (gridSize*robots[color].x + robots[color].y)*Math.pow(gridSize*gridSize, color);
-    }
+    i += (gridSize*robots[0] + robots[1]);
+    i += (gridSize*robots[2] + robots[3])*256;
+    i += (gridSize*robots[4] + robots[5])*65536;
+    i += (gridSize*robots[6] + robots[7])*16777216;
+    i += (gridSize*robots[8] + robots[9])*4294967296;
     return i;
 }
 
+
+// Moves
+const VoidUp       = 0b10000000000000000000;
+const VoidDown     = 0b01000000000000000000;
+const VoidLeft     = 0b00100000000000000000;
+const VoidRight    = 0b00010000000000000000;
+const RedUp        = 0b00001000000000000000;
+const RedDown      = 0b00000100000000000000;
+const RedLeft      = 0b00000010000000000000;
+const RedRight     = 0b00000001000000000000;
+const GreenUp      = 0b00000000100000000000;
+const GreenDown    = 0b00000000010000000000;
+const GreenLeft    = 0b00000000001000000000;
+const GreenRight   = 0b00000000000100000000;
+const BlueUp       = 0b00000000000010000000;
+const BlueDown     = 0b00000000000001000000;
+const BlueLeft     = 0b00000000000000100000;
+const BlueRight    = 0b00000000000000010000;
+const YellowUp     = 0b00000000000000001000;
+const YellowDown   = 0b00000000000000000100;
+const YellowLeft   = 0b00000000000000000010;
+const YellowRight  = 0b00000000000000000001;
+
+// Move Masks
+const IsVoid   = 0b11110000000000000000;
+const IsRed    = 0b00001111000000000000;
+const IsGreen  = 0b00000000111100000000;
+const IsBlue   = 0b00000000000011110000;
+const IsYellow = 0b00000000000000001111;
+const IsUp     = 0b10001000100010001000;
+const IsDown   = 0b01000100010001000100;
+const IsLeft   = 0b00100010001000100010;
+const IsRight  = 0b00010001000100010001;
+
 class GameState{
-    constructor(robots, moves){
-        this.robots = JSON.parse(JSON.stringify(robots));
-        this.moves = JSON.parse(JSON.stringify(moves))
+    /**
+     * @param {Uint8Array} robots 
+     * @param {ArrayBuffer} moves 
+     * @param {number} possibleMoves 
+     */
+    constructor(robots, moves, possibleMoves){
+        this.robots = robots.slice();
+        this.moves = moves.slice();
+        this.possibleMoves = possibleMoves;
     }
 
-    Move(movingColor, movingD){
-        let movingRobot = this.robots[movingColor];
+    Move(move){
+        let xId = null;
+        let yId = null;
+        let blockXA = null;
+        let blockYA = null;
+        let blockXB = null;
+        let blockYB = null;
+        let blockXC = null;
+        let blockYC = null;
+        let blockXD = null;
+        let blockYD = null;
 
-        if(movingD == UP){
-            let maxY = movingRobot.y;
-            let minY = 0;
-            board.hWalls[movingRobot.x].forEach(y => {
-                if(minY <= y && y < maxY){ minY = y+1; }
-            })
-            
-            for(let color = 0; color < 5; color++){
-                if(color == movingColor){continue;}
-                let blockX = this.robots[color].x;
-                let blockY = this.robots[color].y;
-
-                if(blockX == movingRobot.x && minY <= blockY && blockY < maxY){
-                    minY = blockY + 1;
-                }
-            }
-            movingRobot.y = minY;
+        if(move & IsVoid){
+            xId = 0; yId = 1;
+            blockXA = this.robots[2]; blockYA = this.robots[3];
+            blockXB = this.robots[4]; blockYB = this.robots[5];
+            blockXC = this.robots[6]; blockYC = this.robots[7];
+            blockXD = this.robots[8]; blockYD = this.robots[9];
         }
-        if(movingD == LEFT){
-            let maxX = movingRobot.x;
-            let minX = 0;
-            board.vWalls[movingRobot.y].forEach(x => {
-                if(minX <= x && x < maxX){ minX = x+1; }
-            })
-            
-            for(let color = 0; color < 5; color++){
-                if(color == movingColor){continue;}
-                let blockX = this.robots[color].x;
-                let blockY = this.robots[color].y;
-
-                if(blockY == movingRobot.y && minX <= blockX && blockX < maxX){
-                    minX = blockX + 1;
-                }
-            }
-            movingRobot.x = minX;
+        else if(move & IsRed){
+            xId = 2; yId = 3;
+            blockXA = this.robots[0]; blockYA = this.robots[1];
+            blockXB = this.robots[4]; blockYB = this.robots[5];
+            blockXC = this.robots[6]; blockYC = this.robots[7];
+            blockXD = this.robots[8]; blockYD = this.robots[9];
         }
-        if(movingD == DOWN){
-            let maxY = gridSize - 1;
-            let minY = movingRobot.y;
-            board.hWalls[movingRobot.x].forEach(y => {
-                if(minY <= y && y < maxY){ maxY = y; }
-            })
-            
-            for(let color = 0; color < 5; color++){
-                if(color == movingColor){continue;}
-                let blockX = this.robots[color].x;
-                let blockY = this.robots[color].y;
-
-                if(blockX == movingRobot.x && minY < blockY && blockY <= maxY){
-                    maxY = blockY - 1;
-                }
-            }
-            movingRobot.y = maxY;
+        else if(move & IsGreen){
+            xId = 4; yId = 5;
+            blockXA = this.robots[2]; blockYA = this.robots[3];
+            blockXB = this.robots[0]; blockYB = this.robots[1];
+            blockXC = this.robots[6]; blockYC = this.robots[7];
+            blockXD = this.robots[8]; blockYD = this.robots[9];
         }
-        if(movingD == RIGHT){
-            let maxX = gridSize - 1;
-            let minX = movingRobot.x;
-            board.vWalls[movingRobot.y].forEach(x => {
-                if(minX <= x && x < maxX){ maxX = x; }
-            })
-            
-            for(let color = 0; color < 5; color++){
-                if(color == movingColor){continue;}
-                let blockX = this.robots[color].x;
-                let blockY = this.robots[color].y;
-
-                if(blockY == movingRobot.y && minX < blockX && blockX <= maxX){
-                    maxX = blockX - 1;
-                }
-            }
-            movingRobot.x = maxX;
+        else if(move & IsBlue){
+            xId = 6; yId = 7;
+            blockXA = this.robots[2]; blockYA = this.robots[3];
+            blockXB = this.robots[4]; blockYB = this.robots[5];
+            blockXC = this.robots[0]; blockYC = this.robots[1];
+            blockXD = this.robots[8]; blockYD = this.robots[9];
         }
-        this.moves.push({color:movingColor, dir:movingD});
+        else if(move & IsYellow){
+            xId = 8; yId = 9;
+            blockXA = this.robots[2]; blockYA = this.robots[3];
+            blockXB = this.robots[4]; blockYB = this.robots[5];
+            blockXC = this.robots[6]; blockYC = this.robots[7];
+            blockXD = this.robots[0]; blockYD = this.robots[1];
+        }
+
+        let currentSpot = this.robots[xId] + 16*this.robots[yId];
+
+        if(move & IsUp){
+            let maxY = this.robots[yId];
+            let minY = board.upLimit[currentSpot];
+
+            if(blockXA == this.robots[xId] && minY <= blockYA && blockYA < maxY){ minY = blockYA + 1; }
+            if(blockXB == this.robots[xId] && minY <= blockYB && blockYB < maxY){ minY = blockYB + 1; }
+            if(blockXC == this.robots[xId] && minY <= blockYC && blockYC < maxY){ minY = blockYC + 1; }
+            if(blockXD == this.robots[xId] && minY <= blockYD && blockYD < maxY){ minY = blockYD + 1; }
+
+            this.robots[yId] = minY;
+        }else if(move & IsLeft){
+            let maxX = this.robots[xId];
+            let minX = board.leftLimit[currentSpot];
+
+            if(blockYA == this.robots[yId] && minX <= blockXA && blockXA < maxX){ minX = blockXA + 1; }
+            if(blockYB == this.robots[yId] && minX <= blockXB && blockXB < maxX){ minX = blockXB + 1; }
+            if(blockYC == this.robots[yId] && minX <= blockXC && blockXC < maxX){ minX = blockXC + 1; }
+            if(blockYD == this.robots[yId] && minX <= blockXD && blockXD < maxX){ minX = blockXD + 1; }
+
+            this.robots[xId] = minX;
+        }else if(move & IsDown){
+            let maxY = board.downLimit[currentSpot];
+            let minY = this.robots[yId];
+
+            if(blockXA == this.robots[xId] && minY < blockYA && blockYA <= maxY){ maxY = blockYA - 1; }
+            if(blockXB == this.robots[xId] && minY < blockYB && blockYB <= maxY){ maxY = blockYB - 1; }
+            if(blockXC == this.robots[xId] && minY < blockYC && blockYC <= maxY){ maxY = blockYC - 1; }
+            if(blockXD == this.robots[xId] && minY < blockYD && blockYD <= maxY){ maxY = blockYD - 1; }
+
+            this.robots[yId] = maxY;
+        }else if(move & IsRight){
+            let maxX = board.rightLimit[currentSpot];
+            let minX = this.robots[xId];
+
+            if(blockYA == this.robots[yId] && minX < blockXA && blockXA <= maxX){ maxX = blockXA - 1; }
+            if(blockYB == this.robots[yId] && minX < blockXB && blockXB <= maxX){ maxX = blockXB - 1; }
+            if(blockYC == this.robots[yId] && minX < blockXC && blockXC <= maxX){ maxX = blockXC - 1; }
+            if(blockYD == this.robots[yId] && minX < blockXD && blockXD <= maxX){ maxX = blockXD - 1; }
+
+            this.robots[xId] = maxX;
+        }
+
+        this.moves[this.moves[0] + 1] = move;
+        this.moves[0]++;
     }
 
     CheckWin(goal){
-        if(goal == 0){
-            return this.robots.some(robot => robot.x == board.goals[0].x && robot.y == board.goals[0].y)
-        }
-        let goalColor = (goal-1) % 4 + 1;
-        return this.robots[goalColor].x == board.goals[goal].x && this.robots[goalColor].y == board.goals[goal].y;
-    }
-
-    SolveTree(goal, depth){
-        if(depth == 0){return false;}
-        
-        let stateKey = EncodeRobots(this.robots);
-        if(seenStates.has(stateKey)){return false;}
-        seenStates.set(stateKey, true);
-
-        console.log(this.moves);
-
-        let newRobots = []; 
-        for(let color = 0; color <= 4; color++){
-            newRobots.push([]);
-            for(let d = 0; d < 4; d++){
-                newRobots[color][d] = new GameState(this.robots, this.moves)
-                newRobots[color][d].Move(color, d);
-                let isWin = newRobots[color][d].CheckWin(goal);
-                if(isWin){return newRobots[color][d];}
-            }
-        }
-        
-        for(let color = 0; color <= 4; color++){
-            for(let d = 0; d < 4; d++){
-                let winningRobots = newRobots[color][d].SolveTree(goal, depth-1);
-                if(winningRobots !== false){return winningRobots;}
-            }
-        }
+        let goalColor = goal % 4;
+        let goalX = board.goals[2*goal];
+        let goalY = board.goals[2*goal + 1];
+        if(this.robots[0] == goalX && this.robots[1] == goalY && (goal == 16 || goalColor == RED)){ return true; }
+        else if(this.robots[2] == goalX && this.robots[3] == goalY && (goal == 16 || goalColor == GREEN)){ return true; }
+        else if(this.robots[4] == goalX && this.robots[5] == goalY && (goal == 16 || goalColor == BLUE)){ return true; }
+        else if(this.robots[6] == goalX && this.robots[7] == goalY && (goal == 16 || goalColor == YELLOW)){ return true; }
         return false;
     }
 }
@@ -164,34 +168,35 @@ function Solve(startingState, goal, maxDepth){
     seenStates = new Map();
     todoStates = [startingState];
     let checks = 0;
-    let loops = 0;
+    let stateId = -1;
+    let numOfStates = 1;
+    let startTime = Date.now();
 
-    while(todoStates.length > 0){
-        loops++;
-        let state = todoStates.shift();
+    while(stateId + 1 < numOfStates){
+        stateId++;
+        let state = todoStates[stateId];
 
-        if(state.moves.length > maxDepth){continue;}
+        if(state.moves[0] > maxDepth){continue;}
 
         let stateKey = EncodeRobots(state.robots);
         if(seenStates.has(stateKey)){continue;}
         seenStates.set(stateKey, true);
 
-        checks ++;
+        checks++;
         if(state.CheckWin(goal)){
             console.log("checks", checks);
-            console.log("loops", loops);
+            console.log("loops", stateId);
+            console.log("time", Date.now() - startTime);
             return state;
         }
         
-        let i = 0;
-        for(let color = 0; color <= 4; color++){
-            for(let d = 0; d < 4; d++){
-                let newGameState = new GameState(state.robots, state.moves);
-                newGameState.Move(color, d);
-                todoStates.push(newGameState);
-                i++;
-            }
+        for(let move = 0; move < 20; move++){
+            let newGameState = new GameState(state.robots, state.moves, state.possibleMoves);
+            newGameState.Move(1 << move);
+            todoStates.push(newGameState);
+            numOfStates++;
         }
+
     }
     return false;
 }

@@ -154,10 +154,11 @@ class GameState{
         let goalColor = goal % 4;
         let goalX = board.goals[2*goal];
         let goalY = board.goals[2*goal + 1];
-        if(this.robots[0] == goalX && this.robots[1] == goalY && (goal == 16 || goalColor == RED)){ return true; }
-        else if(this.robots[2] == goalX && this.robots[3] == goalY && (goal == 16 || goalColor == GREEN)){ return true; }
-        else if(this.robots[4] == goalX && this.robots[5] == goalY && (goal == 16 || goalColor == BLUE)){ return true; }
-        else if(this.robots[6] == goalX && this.robots[7] == goalY && (goal == 16 || goalColor == YELLOW)){ return true; }
+        if(this.robots[2] == goalX && this.robots[3] == goalY && (goal == 16 || goalColor == RED)){ return true; }
+        else if(this.robots[4] == goalX && this.robots[5] == goalY && (goal == 16 || goalColor == GREEN)){ return true; }
+        else if(this.robots[6] == goalX && this.robots[7] == goalY && (goal == 16 || goalColor == BLUE)){ return true; }
+        else if(this.robots[8] == goalX && this.robots[9] == goalY && (goal == 16 || goalColor == YELLOW)){ return true; }
+        else if(this.robots[0] == goalX && this.robots[1] == goalY && goal == 16){ return true;}
         return false;
     }
 }

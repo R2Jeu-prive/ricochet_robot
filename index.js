@@ -30,7 +30,7 @@ window.addEventListener("load", () => {
     robots[7] = 14;
     robots[8] = 14;
     robots[9] = 0;
-    let moves = new Uint8Array(20);
+    let moves = new Uint32Array(20);
     moves[0] = 0;
     let ini = new GameState(robots, moves, -1);
     /*ini.Move(GREEN, RIGHT);

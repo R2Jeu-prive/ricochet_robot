@@ -1,26 +1,47 @@
-function drawCanvas(state = null) {
+
+
+
+function draw(state = null) {
     let canvasSize = Math.min(window.innerWidth, window.innerHeight);
+    canvasSize = (gridSize + 2) * Math.floor(canvasSize / (gridSize + 2))
     canvas.height = canvasSize;
     canvas.width = canvasSize;
     canvas.style.width = canvasSize + "px";
     canvas.style.height = canvasSize + "px";
 
-    const cellSize = Math.floor(canvasSize / (gridSize + 2));
+    const cellSize = canvasSize / (gridSize + 2);
     const wallWidth = Math.floor(cellSize / 10);
     const margin = cellSize
 
-    ctx.fillStyle = "#ddd";
+    const colorBackground = "#ddd";
+    const colorCheckerA = "#eee";
+    const colorCheckerB = "#bbb";
+    const colorWall = "#333";
+
+    // draw background
+    ctx.fillStyle = colorBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // draw cells
     for(let i = 0; i < gridSize; i++){
         for(let j = 0; j < gridSize; j++){
-            ctx.fillStyle = "#eee";
+            ctx.fillStyle = colorCheckerA;
             if((i+j) % 2 == 0){
-                ctx.fillStyle = "#bbb";
+                ctx.fillStyle = colorCheckerB;
             }
             ctx.fillRect(margin + i * cellSize, margin + j * cellSize, cellSize, cellSize);
         }
     }
+
+    // draw surounding and walls
+    ctx.strokeStyle = colorWall;
+    ctx.fillStyle = colorBackground;
+    ctx.lineJoin = "round";
+    ctx.lineWidth = wallWidth;
+    ctx.strokeRect(margin, margin, cellSize * gridSize, cellSize * gridSize);
+    ctx.fillRect(margin + cellSize * (gridSize / 2 - 1), margin + cellSize * (gridSize / 2 - 1), cellSize * 2, cellSize * 2);
+    ctx.strokeRect(margin + cellSize * (gridSize / 2 - 1), margin + cellSize * (gridSize / 2 - 1), cellSize * 2, cellSize * 2);
+    return;
 
     for(let i = 0; i < gridSize; i++) {
         for(let j = 0; j < gridSize; j++) {

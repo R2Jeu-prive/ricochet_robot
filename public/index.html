@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ricochet Robot Solver</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div hidden>
+        <img src="images/goals/star.png"/>
+        <img src="images/goals/moon.png"/>
+        <img src="images/goals/planet.png"/>
+        <img src="images/goals/gear.png"/>
+        <img src="images/goals/void.png"/>
+        <img src="images/bot.png"/>
+    </div>
+
+    <canvas class="board" height="500" width="500"></canvas>
+    <div class="robots" hidden>
+        <img src="images/bot.png" class="robot-void"/>
+        <img src="images/bot.png" class="robot-red"/>
+        <img src="images/bot.png" class="robot-green"/>
+        <img src="images/bot.png" class="robot-blue"/>
+        <img src="images/bot.png" class="robot-yellow"/>
+    </div>
+    <div class="goals" hidden>
+        <img src="images/goals/star.png" class="goal star-red red"/>
+        <img src="images/goals/star.png" class="goal star-green green"/>
+        <img src="images/goals/star.png" class="goal star-blue blue"/>
+        <img src="images/goals/star.png" class="goal star-yellow yellow"/>
+        
+        <img src="images/goals/moon.png" class="goal moon-red red"/>
+        <img src="images/goals/moon.png" class="goal moon-green green"/>
+        <img src="images/goals/moon.png" class="goal moon-blue blue"/>
+        <img src="images/goals/moon.png" class="goal moon-yellow yellow"/>
+
+        <img src="images/goals/gear.png" class="goal gear-red red"/>
+        <img src="images/goals/gear.png" class="goal gear-green green"/>
+        <img src="images/goals/gear.png" class="goal gear-blue blue"/>
+        <img src="images/goals/gear.png" class="goal gear-yellow yellow"/>
+
+        <img src="images/goals/planet.png" class="goal planet-red red"/>
+        <img src="images/goals/planet.png" class="goal planet-green green"/>
+        <img src="images/goals/planet.png" class="goal planet-blue blue"/>
+        <img src="images/goals/planet.png" class="goal planet-yellow yellow"/>
+
+        <img src="images/goals/void.png" class="goal void"/>
+    </div>
+    <div class="interface">
+        <h2>Ricochet Robot - Solver</h2>
+        <section class="edit-mode">
+            <span>Play & Solve</span>
+            <input type="checkbox"/>
+            <span>Edit Board</span>
+        </section>
+        <section class="mode">
+            <div class="goal-select">
+                <img src="images/goals/star.png" class="star-red red"/>
+                <img src="images/goals/star.png" class="star-green green"/>
+                <img src="images/goals/star.png" class="star-blue blue"/>
+                <img src="images/goals/star.png" class="star-yellow yellow"/>
+                
+                <img src="images/goals/moon.png" class="moon-red red"/>
+                <img src="images/goals/moon.png" class="moon-green green selected"/>
+                <img src="images/goals/moon.png" class="moon-blue blue"/>
+                <img src="images/goals/moon.png" class="moon-yellow yellow"/>
+
+                <img src="images/goals/gear.png" class="gear-red red"/>
+                <img src="images/goals/gear.png" class="gear-green green"/>
+                <img src="images/goals/gear.png" class="gear-blue blue"/>
+                <img src="images/goals/gear.png" class="gear-yellow yellow"/>
+
+                <img src="images/goals/planet.png" class="planet-red red"/>
+                <img src="images/goals/planet.png" class="planet-green green"/>
+                <img src="images/goals/planet.png" class="planet-blue blue"/>
+                <img src="images/goals/planet.png" class="planet-yellow yellow"/>
+
+                <img src="images/goals/void.png" class="void"/>
+            </div>
+            <button>Solve</button>
+        </section>
+        <section>
+            <p>Found a solution in <b class="move-count">18</b> moves</p>
+            <button>Play Animation</button>
+            <button>Accept</button>
+            <button>Reset</button>
+        </section>
+    </div>
+    <script src="board.js"></script>
+    <script src="solver.js"></script>
+    <script src="ui.js"></script>
+    <script src="index.js" type="module"></script>
+</body>
+<footer>
+    <script>
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+        ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+</footer>
+</html>

@@ -1,9 +1,10 @@
+import { defaultBoard } from "./defaultBoard.js"
+
+console.log(defaultBoard);
 
 const canvas = document.getElementsByClassName("board")[0];
 const ctx = canvas.getContext("2d");
 const gridSize = 16;
-const V = 0; // vertical wall right of cell
-const H = 1; // horizontal wall under cell
 
 const RED = 0;
 const GREEN = 1;
@@ -16,9 +17,11 @@ const GEAR = 8;
 const PLANET = 12;
 const VOID = 16;
 
+let board = {}
+
 window.addEventListener("load", () => {
-    initBoard();
-    drawCanvas();
+    board = defaultBoard;    
+    draw();
     let robots = new Uint8Array(2*5);
     robots[0] = 0;
     robots[1] = 0;
@@ -38,6 +41,6 @@ window.addEventListener("load", () => {
     ini.Move(GREEN, LEFT);
     ini.Move(GREEN, DOWN);
     ini.Move(GREEN, RIGHT);*/
-    drawCanvas(ini);
-    console.log(Solve(ini, MOON+GREEN, 7));
+    //draw(ini);
+    //console.log(Solve(ini, MOON+GREEN, 7));
 });

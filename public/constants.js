@@ -87,8 +87,8 @@ export const defaultState = {
         1,1,
         0,0,
         15,0,
-        15,15,
-        0,15
+        4,15,
+        3,9
     ]),
     moves : new Uint32Array(30)
 }

@@ -1,14 +1,12 @@
-let board = {};
-const V = 0; // vertical wall right of cell
-const H = 1; // horizontal wall under cell
+import { gridSize, H, V } from "./constants.js";
 
-function assertCenterWalls(){
+export function assertCenterWalls(board){
     // center walls
     for(let i = 0; i < 2; i++){
-        board.walls.push({x:gridSize/2 + i - 1, y:gridSize/2 - 2, type:H});
-        board.walls.push({x:gridSize/2 + i - 1, y:gridSize/2, type:H});
-        board.walls.push({x:gridSize/2 - 2, y:gridSize/2 + i - 1, type:V});
-        board.walls.push({x:gridSize/2, y:gridSize/2 + i - 1, type:V});
+        board.walls.push({x:7 + i, y:6, type:H});
+        board.walls.push({x:7 + i, y:8, type:H});
+        board.walls.push({x:6, y:7 + i, type:V});
+        board.walls.push({x:8, y:7 + i, type:V});
     }
 
     // clear duplicates
@@ -17,9 +15,12 @@ function assertCenterWalls(){
         var k = JSON.stringify(wall);
         return seen.has(k) ? false : (seen.set(k, true) || true);
     })
+
+    return board;
 }
 
-function preCompute(){
+export function preComputeBoard(board){
+    board = assertCenterWalls(board);
     board.upLimit = new Int8Array(gridSize * gridSize);
     board.downLimit = new Int8Array(gridSize * gridSize);
     board.leftLimit = new Int8Array(gridSize * gridSize);
@@ -50,4 +51,6 @@ function preCompute(){
             }
         }
     }
+
+    return board;
 }

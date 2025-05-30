@@ -5,7 +5,7 @@
     <title>Ricochet Robot Solver</title>
     <link rel="stylesheet" href="/index.css">
 </head>
-<body>
+<body class="play">
     <div hidden>
         <img src="images/goals/star.png"/>
         <img src="images/goals/moon.png"/>
@@ -16,79 +16,78 @@
     </div>
 
     <canvas class="board" height="500" width="500"></canvas>
-    <div class="robots" hidden>
-        <img src="images/bot.png" class="robot-void"/>
-        <img src="images/bot.png" class="robot-red"/>
-        <img src="images/bot.png" class="robot-green"/>
-        <img src="images/bot.png" class="robot-blue"/>
-        <img src="images/bot.png" class="robot-yellow"/>
-    </div>
-    <div class="goals" hidden>
-        <img src="images/goals/star.png" class="goal star-red red"/>
-        <img src="images/goals/star.png" class="goal star-green green"/>
-        <img src="images/goals/star.png" class="goal star-blue blue"/>
-        <img src="images/goals/star.png" class="goal star-yellow yellow"/>
+    <div class="goals">
+        <img src="images/goals/star.png" goal-id="0" class="goal red"/>
+        <img src="images/goals/star.png" goal-id="1" class="goal green"/>
+        <img src="images/goals/star.png" goal-id="2" class="goal blue"/>
+        <img src="images/goals/star.png" goal-id="3" class="goal yellow"/>
         
-        <img src="images/goals/moon.png" class="goal moon-red red"/>
-        <img src="images/goals/moon.png" class="goal moon-green green"/>
-        <img src="images/goals/moon.png" class="goal moon-blue blue"/>
-        <img src="images/goals/moon.png" class="goal moon-yellow yellow"/>
-
-        <img src="images/goals/gear.png" class="goal gear-red red"/>
-        <img src="images/goals/gear.png" class="goal gear-green green"/>
-        <img src="images/goals/gear.png" class="goal gear-blue blue"/>
-        <img src="images/goals/gear.png" class="goal gear-yellow yellow"/>
-
-        <img src="images/goals/planet.png" class="goal planet-red red"/>
-        <img src="images/goals/planet.png" class="goal planet-green green"/>
-        <img src="images/goals/planet.png" class="goal planet-blue blue"/>
-        <img src="images/goals/planet.png" class="goal planet-yellow yellow"/>
-
-        <img src="images/goals/void.png" class="goal void"/>
+        <img src="images/goals/moon.png" goal-id="4" class="goal red"/>
+        <img src="images/goals/moon.png" goal-id="5" class="goal green"/>
+        <img src="images/goals/moon.png" goal-id="6" class="goal blue"/>
+        <img src="images/goals/moon.png" goal-id="7" class="goal yellow"/>
+        
+        <img src="images/goals/gear.png" goal-id="8" class="goal red"/>
+        <img src="images/goals/gear.png" goal-id="9" class="goal green"/>
+        <img src="images/goals/gear.png" goal-id="10" class="goal blue"/>
+        <img src="images/goals/gear.png" goal-id="11" class="goal yellow"/>
+        
+        <img src="images/goals/planet.png" goal-id="12" class="goal red"/>
+        <img src="images/goals/planet.png" goal-id="13" class="goal green"/>
+        <img src="images/goals/planet.png" goal-id="14" class="goal blue"/>
+        <img src="images/goals/planet.png" goal-id="15" class="goal yellow"/>
+        
+        <img src="images/goals/void.png" goal-id="16" class="goal void"/>
+    </div>
+    <div class="robots">
+        <img src="images/bot.png" robot-id="0" class="voidRobot"/>
+        <img src="images/bot.png" robot-id="1" class="redRobot"/>
+        <img src="images/bot.png" robot-id="2" class="greenRobot"/>
+        <img src="images/bot.png" robot-id="3" class="blueRobot" />
+        <img src="images/bot.png" robot-id="4" class="yellowRobot"/>
     </div>
     <div class="interface">
         <h2>Ricochet Robot - Solver</h2>
-        <section class="edit-mode">
-            <span>Play & Solve</span>
-            <input type="checkbox"/>
-            <span>Edit Board</span>
+        <section class="setupPanel">
+            <p>In this mode you can move goals around and click to create or delete walls</p>
+            <button onclick="switchMode('play')">Save Board Setup</button>
         </section>
-        <section class="mode">
-            <div class="goal-select">
-                <img src="images/goals/star.png" class="star-red red"/>
-                <img src="images/goals/star.png" class="star-green green"/>
-                <img src="images/goals/star.png" class="star-blue blue"/>
-                <img src="images/goals/star.png" class="star-yellow yellow"/>
+        <section class="playPanel">
+            <button onclick="switchMode('setup')">Edit Board Setup</button>
+            
+            <p>Select a goal to solve for :</p>
+            <div class="goalSelect">
+                <img onclick="selectGoal(this, 0)" src="images/goals/star.png" class="starRed red"/>
+                <img onclick="selectGoal(this, 1)" src="images/goals/star.png" class="starGreen green"/>
+                <img onclick="selectGoal(this, 2)" src="images/goals/star.png" class="starBlue blue"/>
+                <img onclick="selectGoal(this, 3)" src="images/goals/star.png" class="starYellow yellow"/>
                 
-                <img src="images/goals/moon.png" class="moon-red red"/>
-                <img src="images/goals/moon.png" class="moon-green green selected"/>
-                <img src="images/goals/moon.png" class="moon-blue blue"/>
-                <img src="images/goals/moon.png" class="moon-yellow yellow"/>
+                <img onclick="selectGoal(this, 4)" src="images/goals/moon.png" class="moonRed red"/>
+                <img onclick="selectGoal(this, 5)" src="images/goals/moon.png" class="moonGreen green selected"/>
+                <img onclick="selectGoal(this, 6)" src="images/goals/moon.png" class="moonBlue blue"/>
+                <img onclick="selectGoal(this, 7)" src="images/goals/moon.png" class="moonYellow yellow"/>
 
-                <img src="images/goals/gear.png" class="gear-red red"/>
-                <img src="images/goals/gear.png" class="gear-green green"/>
-                <img src="images/goals/gear.png" class="gear-blue blue"/>
-                <img src="images/goals/gear.png" class="gear-yellow yellow"/>
+                <img onclick="selectGoal(this, 8)" src="images/goals/gear.png" class="gearRed red"/>
+                <img onclick="selectGoal(this, 9)" src="images/goals/gear.png" class="gearGreen green"/>
+                <img onclick="selectGoal(this, 10)" src="images/goals/gear.png" class="gearBlue blue"/>
+                <img onclick="selectGoal(this, 11)" src="images/goals/gear.png" class="gearYellow yellow"/>
 
-                <img src="images/goals/planet.png" class="planet-red red"/>
-                <img src="images/goals/planet.png" class="planet-green green"/>
-                <img src="images/goals/planet.png" class="planet-blue blue"/>
-                <img src="images/goals/planet.png" class="planet-yellow yellow"/>
+                <img onclick="selectGoal(this, 12)" src="images/goals/planet.png" class="planetRed red"/>
+                <img onclick="selectGoal(this, 13)" src="images/goals/planet.png" class="planetGreen green"/>
+                <img onclick="selectGoal(this, 14)" src="images/goals/planet.png" class="planetBlue blue"/>
+                <img onclick="selectGoal(this, 15)" src="images/goals/planet.png" class="planetYellow yellow"/>
 
-                <img src="images/goals/void.png" class="void"/>
+                <img onclick="selectGoal(this, 16)" src="images/goals/void.png" class="void"/>
             </div>
-            <button>Solve</button>
+            <button onclick="solveClick(this);">Solve</button>
         </section>
-        <section>
-            <p>Found a solution in <b class="move-count">18</b> moves</p>
-            <button>Play Animation</button>
-            <button>Accept</button>
-            <button>Reset</button>
+        <section class="solutionPanel">
+            <p>Found a solution in <b class="moveCount">18</b> moves</p>
+            <button onclick="playAnimation();">Play Animation</button>
+            <button onclick="acceptSolution();">Accept</button>
+            <button onclick="resetSolution();">Reset</button>
         </section>
     </div>
-    <script src="board.js"></script>
-    <script src="solver.js"></script>
-    <script src="ui.js"></script>
     <script src="index.js" type="module"></script>
 </body>
 <footer>

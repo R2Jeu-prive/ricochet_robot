@@ -1,3 +1,39 @@
+import { gridSize, H, V, RED, GREEN, BLUE, YELLOW } from "./constants.js";
+import { preComputeBoard } from "./board.js";
+
+// Moves
+export const VoidUp       = 0b10000000000000000000;
+export const VoidDown     = 0b01000000000000000000;
+export const VoidLeft     = 0b00100000000000000000;
+export const VoidRight    = 0b00010000000000000000;
+export const RedUp        = 0b00001000000000000000;
+export const RedDown      = 0b00000100000000000000;
+export const RedLeft      = 0b00000010000000000000;
+export const RedRight     = 0b00000001000000000000;
+export const GreenUp      = 0b00000000100000000000;
+export const GreenDown    = 0b00000000010000000000;
+export const GreenLeft    = 0b00000000001000000000;
+export const GreenRight   = 0b00000000000100000000;
+export const BlueUp       = 0b00000000000010000000;
+export const BlueDown     = 0b00000000000001000000;
+export const BlueLeft     = 0b00000000000000100000;
+export const BlueRight    = 0b00000000000000010000;
+export const YellowUp     = 0b00000000000000001000;
+export const YellowDown   = 0b00000000000000000100;
+export const YellowLeft   = 0b00000000000000000010;
+export const YellowRight  = 0b00000000000000000001;
+
+// Move Masks
+export const IsVoid   = 0b11110000000000000000;
+export const IsRed    = 0b00001111000000000000;
+export const IsGreen  = 0b00000000111100000000;
+export const IsBlue   = 0b00000000000011110000;
+export const IsYellow = 0b00000000000000001111;
+export const IsUp     = 0b10001000100010001000;
+export const IsDown   = 0b01000100010001000100;
+export const IsLeft   = 0b00100010001000100010;
+export const IsRight  = 0b00010001000100010001;
+
 function EncodeRobots(robots){
     let i = 0;
     i += (gridSize*robots[0] + robots[1]);
@@ -8,53 +44,16 @@ function EncodeRobots(robots){
     return i;
 }
 
-
-// Moves
-const VoidUp       = 0b10000000000000000000;
-const VoidDown     = 0b01000000000000000000;
-const VoidLeft     = 0b00100000000000000000;
-const VoidRight    = 0b00010000000000000000;
-const RedUp        = 0b00001000000000000000;
-const RedDown      = 0b00000100000000000000;
-const RedLeft      = 0b00000010000000000000;
-const RedRight     = 0b00000001000000000000;
-const GreenUp      = 0b00000000100000000000;
-const GreenDown    = 0b00000000010000000000;
-const GreenLeft    = 0b00000000001000000000;
-const GreenRight   = 0b00000000000100000000;
-const BlueUp       = 0b00000000000010000000;
-const BlueDown     = 0b00000000000001000000;
-const BlueLeft     = 0b00000000000000100000;
-const BlueRight    = 0b00000000000000010000;
-const YellowUp     = 0b00000000000000001000;
-const YellowDown   = 0b00000000000000000100;
-const YellowLeft   = 0b00000000000000000010;
-const YellowRight  = 0b00000000000000000001;
-
-// Move Masks
-const IsVoid   = 0b11110000000000000000;
-const IsRed    = 0b00001111000000000000;
-const IsGreen  = 0b00000000111100000000;
-const IsBlue   = 0b00000000000011110000;
-const IsYellow = 0b00000000000000001111;
-const IsUp     = 0b10001000100010001000;
-const IsDown   = 0b01000100010001000100;
-const IsLeft   = 0b00100010001000100010;
-const IsRight  = 0b00010001000100010001;
-
-class GameState{
+export class GameState{
     /**
-     * @param {Uint8Array} robots 
-     * @param {ArrayBuffer} moves 
-     * @param {number} possibleMoves 
+     * @param {GameState} previousState will be deep copied 
      */
-    constructor(robots, moves, possibleMoves){
-        this.robots = robots.slice();
-        this.moves = moves.slice();
-        this.possibleMoves = possibleMoves;
+    constructor(previousState){
+        this.robots = previousState.robots.slice();
+        this.moves = previousState.moves.slice();
     }
 
-    Move(move){
+    Move(board, move){
         let xId = null;
         let yId = null;
         let blockXA = null;
@@ -150,7 +149,7 @@ class GameState{
         this.moves[0]++;
     }
 
-    CheckWin(goal){
+    CheckWin(board, goal){
         let goalColor = goal % 4;
         let goalX = board.goals[2*goal];
         let goalY = board.goals[2*goal + 1];
@@ -163,11 +162,10 @@ class GameState{
     }
 }
 
-let seenStates = null;
-let todoStates = null;
-function Solve(startingState, goal, maxDepth){
-    seenStates = new Map();
-    todoStates = [startingState];
+export function solve(board, startingState, goal, maxDepth){
+    board = preComputeBoard(board);
+    let seenStates = new Map();
+    let todoStates = [startingState];
     let checks = 0;
     let stateId = -1;
     let numOfStates = 1;
@@ -176,7 +174,7 @@ function Solve(startingState, goal, maxDepth){
     while(stateId + 1 < numOfStates){
         stateId++;
         let state = todoStates[stateId];
-
+        
         if(state.moves[0] > maxDepth){continue;}
 
         let stateKey = EncodeRobots(state.robots);
@@ -184,7 +182,7 @@ function Solve(startingState, goal, maxDepth){
         seenStates.set(stateKey, true);
 
         checks++;
-        if(state.CheckWin(goal)){
+        if(state.CheckWin(board, goal)){
             console.log("checks", checks);
             console.log("loops", stateId);
             console.log("time", Date.now() - startTime);
@@ -192,8 +190,8 @@ function Solve(startingState, goal, maxDepth){
         }
         
         for(let move = 0; move < 20; move++){
-            let newGameState = new GameState(state.robots, state.moves, state.possibleMoves);
-            newGameState.Move(1 << move);
+            let newGameState = new GameState(state);
+            newGameState.Move(board, 1 << move);
             todoStates.push(newGameState);
             numOfStates++;
         }

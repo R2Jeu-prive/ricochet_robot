@@ -1,3 +1,20 @@
+export const gridSize = 16;
+
+// For goals
+export const RED = 0;
+export const GREEN = 1;
+export const BLUE = 2;
+export const YELLOW = 3;
+export const STAR = 0;
+export const MOON = 4;
+export const GEAR = 8;
+export const PLANET = 12;
+export const VOID = 16;
+
+// For walls
+export const V = 0; // vertical wall right of cell
+export const H = 1; // horizontal wall under cell
+
 export const defaultBoard = {
     goals : Uint8Array.from([
         13, 10,
@@ -63,4 +80,15 @@ export const defaultBoard = {
         {x:2,y:13,type:H},
         {x:9,y:13,type:H},
     ]
+}
+
+export const defaultState = {
+    robots : Uint8Array.from([
+        1,1,
+        0,0,
+        15,0,
+        15,15,
+        0,15
+    ]),
+    moves : new Uint32Array(30)
 }

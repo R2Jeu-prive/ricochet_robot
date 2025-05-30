@@ -17,7 +17,7 @@ body{
     width: -webkit-fill-available;
 }
 
-.goal-select{
+.goalSelect{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -30,15 +30,54 @@ body{
     width: 210px;
 }
 
-.goal-select > img{
+.goalSelect > img{
     height: 30px;
     width: 30px;
     cursor: pointer;
 }
 
-.goal-select > img.selected{
+.goalSelect > img.selected{
     border-radius: 1px;
     transform: scale(1.5);
+}
+
+.robots{
+    position: absolute;
+}
+.setup .robots{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.goals{
+    position: absolute;
+    pointer-events: none;
+}
+.setup .goals{
+    pointer-events: all;
+}
+
+.robots > *, .goals > *{
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.playPanel, .setupPanel, .solutionPanel{
+    display: none;
+}
+
+.play .playPanel, .setup .setupPanel, .solution .solutionPanel{
+    display: initial;
+}
+
+.robots > img{
+    transition: all 0.5s ease-in-out;
+}
+
+
+
+.void{
+    filter: contrast(.8) drop-shadow(0px 2px 0px #e5e) drop-shadow(0px -2px 0px #e5e) drop-shadow(2px 0px 0px #e5e) drop-shadow(-2px 0px 0px #e5e);
 }
 
 .red{
@@ -54,9 +93,27 @@ body{
 }
 
 .yellow{
-    filter: contrast(.8) drop-shadow(0px 2px 0px #cc5) drop-shadow(0px -2px 0px #cc5) drop-shadow(2px 0px 0px #cc5) drop-shadow(-2px 0px 0px #cc5);
+    filter: contrast(.8) drop-shadow(0px 2px 0px #ee5) drop-shadow(0px -2px 0px #ee5) drop-shadow(2px 0px 0px #ee5) drop-shadow(-2px 0px 0px #ee5);
 }
 
-.void{
-    filter: contrast(.8) drop-shadow(0px 2px 0px #c5c) drop-shadow(0px -2px 0px #c5c) drop-shadow(2px 0px 0px #c5c) drop-shadow(-2px 0px 0px #c5c);
+
+.voidRobot{
+    filter: drop-shadow(0px 4px 0px #e5e) drop-shadow(0px -4px 0px #e5e) drop-shadow(4px 0px 0px #e5e) drop-shadow(-4px 0px 0px #e5e);
 }
+
+.redRobot{
+    filter: drop-shadow(0px 4px 0px #e55) drop-shadow(0px -4px 0px #e55) drop-shadow(4px 0px 0px #e55) drop-shadow(-4px 0px 0px #e55);
+}
+
+.greenRobot{
+    filter: drop-shadow(0px 4px 0px #5c5) drop-shadow(0px -4px 0px #5c5) drop-shadow(4px 0px 0px #5c5) drop-shadow(-4px 0px 0px #5c5);
+}
+
+.blueRobot{
+    filter: drop-shadow(0px 4px 0px #55c) drop-shadow(0px -4px 0px #55c) drop-shadow(4px 0px 0px #55c) drop-shadow(-4px 0px 0px #55c);
+}
+
+.yellowRobot{
+    filter: drop-shadow(0px 4px 0px #ee5) drop-shadow(0px -4px 0px #ee5) drop-shadow(4px 0px 0px #ee5) drop-shadow(-4px 0px 0px #ee5);
+}
+

@@ -1,7 +1,9 @@
+import { gridSize, H, V } from "./constants.js";
 
+export function drawBoard(board, state = null){
+    const canvas = document.getElementsByClassName("board")[0];
+    const ctx = canvas.getContext("2d");
 
-
-function draw(state = null) {
     let canvasSize = Math.min(window.innerWidth, window.innerHeight);
     canvasSize = (gridSize + 2) * Math.floor(canvasSize / (gridSize + 2))
     canvas.height = canvasSize;
@@ -11,10 +13,10 @@ function draw(state = null) {
 
     const cellSize = canvasSize / (gridSize + 2);
     const wallWidth = Math.floor(cellSize / 10);
-    const margin = cellSize
+    const margin = cellSize;
 
     const colorBackground = "#ddd";
-    const colorCheckerA = "#eee";
+    const colorCheckerA = "#999";
     const colorCheckerB = "#bbb";
     const colorWall = "#333";
 
@@ -41,8 +43,8 @@ function draw(state = null) {
     ctx.strokeRect(margin, margin, cellSize * gridSize, cellSize * gridSize);
     ctx.fillRect(margin + cellSize * (gridSize / 2 - 1), margin + cellSize * (gridSize / 2 - 1), cellSize * 2, cellSize * 2);
     ctx.strokeRect(margin + cellSize * (gridSize / 2 - 1), margin + cellSize * (gridSize / 2 - 1), cellSize * 2, cellSize * 2);
-    return;
-
+    
+    // draw walls
     for(let i = 0; i < gridSize; i++) {
         for(let j = 0; j < gridSize; j++) {
             ctx.fillStyle = "#333";
@@ -55,34 +57,33 @@ function draw(state = null) {
         }
     }
 
-    for(let i = 0; i <= 16; i++){
-        let goalX = board.goals[2*i];
-        let goalY = board.goals[2*i+1];
-        let color = "#c5c";
-        let shape = "void";
-        if(i != VOID){
-            color = ["#c55", "#5c5", "#55c", "#cc5"][i % 4];
-            shape = ["star", "moon", "gear", "planet"][Math.floor(i/4)];
-        }
+    // draw goals
+    let goals = document.getElementsByClassName("goals")[0];
+    for (const goal of goals.children) {
+        goal.style.width = cellSize*0.6 + "px";
+        goal.style.height = cellSize*0.6 + "px";
 
-        let img = new Image();
-        img.src = "images/goals/" + shape +  ".png";
-        ctx.filter = "contrast(.8) drop-shadow(0px 2px 0px " + color + ") drop-shadow(0px -2px 0px " + color + ") drop-shadow(2px 0px 0px " + color + ") drop-shadow(-2px 0px 0px " + color + ")";
-        ctx.drawImage(img, margin + goalX * cellSize + cellSize/4, margin + goalY * cellSize + cellSize/4, cellSize / 2, cellSize / 2);
-        ctx.filter = "none";
+        const id = parseInt(goal.getAttribute("goal-id"));
+        const x = board.goals[2*id];
+        const y = board.goals[2*id + 1];
+
+        goal.style.left = (margin + x * cellSize + cellSize/2) + "px";
+        goal.style.top = (margin + y * cellSize + cellSize/2) + "px";
     }
 
-    if(state != null){
-        for(let c = 0; c < 5; c++){
-            let robotX = state.robots[2*c];
-            let robotY = state.robots[2*c+1];
-            let color = ["#f0f", "#f00", "#0f0", "#00f", "#ff0"][c];
+    // draw state
+    if(state == null){return;}
+    let robots = document.getElementsByClassName("robots")[0];
 
-            let img = new Image();
-            img.src = "images/bot.png";
-            ctx.filter = "contrast(.8) drop-shadow(0px 4px 0px " + color + ") drop-shadow(0px -4px 0px " + color + ") drop-shadow(4px 0px 0px " + color + ") drop-shadow(-4px 0px 0px " + color + ")";
-            ctx.drawImage(img, margin + robotX * cellSize + cellSize/8, margin + robotY * cellSize + cellSize/8, cellSize * 0.75, cellSize *0.75);
-            ctx.filter = "none";
-        }
+    for (const robot of robots.children) {
+        robot.style.width = cellSize*0.6 + "px";
+        robot.style.height = cellSize*0.6 + "px";
+
+        const id = parseInt(robot.getAttribute("robot-id"));
+        const x = state.robots[2*id];
+        const y = state.robots[2*id + 1];
+
+        robot.style.left = (margin + x * cellSize + cellSize/2) + "px";
+        robot.style.top = (margin + y * cellSize + cellSize/2) + "px";
     }
 }

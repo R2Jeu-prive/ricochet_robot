@@ -115,16 +115,16 @@ export class GameState{
     }
 
     Move(board, move){
-        let xId = null;
-        let yId = null;
-        let blockXA = null;
-        let blockYA = null;
-        let blockXB = null;
-        let blockYB = null;
-        let blockXC = null;
-        let blockYC = null;
-        let blockXD = null;
-        let blockYD = null;
+        let xId = -1;
+        let yId = -1;
+        let blockXA = -1;
+        let blockYA = -1;
+        let blockXB = -1;
+        let blockYB = -1;
+        let blockXC = -1;
+        let blockYC = -1;
+        let blockXD = -1;
+        let blockYD = -1;
 
         if(move & IsVoid){
             xId = 0; yId = 1;
@@ -164,7 +164,7 @@ export class GameState{
 
         let robot = xId / 2;
         let startCell = this.robots[xId] + 16*this.robots[yId];
-        let endCell = null;
+        let endCell = -1;
 
         if(move & IsUp){
             let maxY = this.robots[yId];

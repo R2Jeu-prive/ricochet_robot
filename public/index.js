@@ -1,4 +1,4 @@
-import { defaultBoard, defaultState, gridSize } from "./constants.js"
+import { defaultBoard, gridSize } from "./constants.js"
 import { drawBoard } from "./ui.js"
 import { GameState, solve } from "./solver.js"
 
@@ -6,7 +6,7 @@ import { GameState, solve } from "./solver.js"
 let board = defaultBoard;
 let mode = "play";
 let dragging = false;
-let iniState = new GameState(defaultState);
+let iniState = GameState.DefaultState();
 let currentState = new GameState(iniState);
 let solvedState = null;
 let selectedGoal = 5;

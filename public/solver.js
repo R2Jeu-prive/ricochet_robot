@@ -170,12 +170,14 @@ export function solve(board, startingState, goal, maxDepth){
     let stateId = -1;
     let numOfStates = 1;
     let startTime = Date.now();
+    let currentDepth = 0;
 
     while(stateId + 1 < numOfStates){
         stateId++;
         let state = todoStates[stateId];
         
         if(state.moves[0] > maxDepth){continue;}
+        if(state.moves[0] > currentDepth){currentDepth++; console.log("Searching Depth :", currentDepth);}
 
         let stateKey = EncodeRobots(state.robots);
         if(seenStates.has(stateKey)){continue;}
@@ -189,11 +191,35 @@ export function solve(board, startingState, goal, maxDepth){
             return state;
         }
         
-        for(let move = 0; move < 20; move++){
-            let newGameState = new GameState(state);
-            newGameState.Move(board, 1 << move);
-            todoStates.push(newGameState);
-            numOfStates++;
+        for(let robot = 0; robot < 5; robot++){
+            let pos = state.robots[2*robot] + gridSize*state.robots[2*robot+1];
+            if(board.upLimit[pos] != pos){
+                let newGameState = new GameState(state);
+                newGameState.Move(board, 1 << (20 - 4*robot));
+                todoStates.push(newGameState);
+                numOfStates++;
+            }
+
+            if(board.downLimit[pos] != pos){
+                let newGameState = new GameState(state);
+                newGameState.Move(board, 1 << (19 - 4*robot));
+                todoStates.push(newGameState);
+                numOfStates++;
+            }
+
+            if(board.leftLimit[pos] != pos){
+                let newGameState = new GameState(state);
+                newGameState.Move(board, 1 << (18 - 4*robot));
+                todoStates.push(newGameState);
+                numOfStates++;
+            }
+
+            if(board.rightLimit[pos] != pos){
+                let newGameState = new GameState(state);
+                newGameState.Move(board, 1 << (17 - 4*robot));
+                todoStates.push(newGameState);
+                numOfStates++;
+            }
         }
 
     }

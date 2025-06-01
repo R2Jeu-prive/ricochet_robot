@@ -80,8 +80,8 @@ export function drawBoard(board, state = null){
         robot.style.height = cellSize*0.6 + "px";
 
         const id = parseInt(robot.getAttribute("robot-id"));
-        const x = state.robots[2*id];
-        const y = state.robots[2*id + 1];
+        const x = state[2*id];
+        const y = state[2*id + 1];
 
         robot.style.left = (margin + x * cellSize + cellSize/2) + "px";
         robot.style.top = (margin + y * cellSize + cellSize/2) + "px";

@@ -82,13 +82,11 @@ export const defaultBoard = {
     ]
 }
 
-export const defaultState = {
-    robots : Uint8Array.from([
-        1,1,
-        0,0,
-        15,0,
-        4,15,
-        3,9
-    ]),
-    moves : new Uint32Array(30)
-}
+export const defaultState = Uint8Array.from([
+    1,1,
+    0,0,
+    15,0,
+    4,15,
+    3,9,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+])

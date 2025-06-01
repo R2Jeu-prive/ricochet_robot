@@ -1,19 +1,19 @@
 import { defaultBoard, defaultState, gridSize } from "./constants.js"
 import { drawBoard } from "./ui.js"
-import { GameState, solve } from "./solver.js"
+import { solve } from "./solver.js"
 
 
 let board = defaultBoard;
 let mode = "play";
 let dragging = false;
-let iniState = new GameState(defaultState);
-let currentState = new GameState(iniState);
+let iniState = defaultState.slice();
+let currentState = iniState.slice();
 let solvedState = null;
 let selectedGoal = 5;
 
 window.addEventListener("resize", () => {
     if(mode == "play"){
-        currentState = new GameState(iniState);
+        currentState = iniState.slice();
     }
     drawBoard(board, currentState);
 });
@@ -106,8 +106,8 @@ function solveClick(button){
     }
 
     switchMode('solution');
-    console.log(solvedState.moves[0]);
-    document.getElementsByClassName("moveCount")[0].innerHTML = solvedState.moves[0];
+    console.log(solvedState[10]);
+    document.getElementsByClassName("moveCount")[0].innerHTML = solvedState[10];
 }
 
 function acceptSolution(){

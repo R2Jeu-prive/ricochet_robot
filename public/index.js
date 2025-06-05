@@ -98,7 +98,7 @@ function switchMode(newMode){
 
 function solveClick(button){
     button.disabled = true;
-    solvedState = solve(board, iniState, selectedGoal, 20);
+    solvedState = solve(board, iniState, selectedGoal, 9);
     button.disabled = false;
     if(!solvedState){
         alert("No solution found !");

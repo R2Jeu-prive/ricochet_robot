@@ -178,6 +178,7 @@ export function solve(board, startingState, goal, maxDepth){
         
         if(state.moves[0] > maxDepth){continue;}
         if(state.moves[0] > currentDepth){currentDepth++; console.log("Searching Depth :", currentDepth);}
+        if(state.moves[0] == 1){console.log(state);}
 
         let stateKey = EncodeRobots(state.robots);
         if(seenStates.has(stateKey)){continue;}
@@ -192,31 +193,33 @@ export function solve(board, startingState, goal, maxDepth){
         }
         
         for(let robot = 0; robot < 5; robot++){
-            let pos = state.robots[2*robot] + gridSize*state.robots[2*robot+1];
-            if(board.upLimit[pos] != pos){
-                let newGameState = new GameState(state);
-                newGameState.Move(board, 1 << (20 - 4*robot));
-                todoStates.push(newGameState);
-                numOfStates++;
-            }
-
-            if(board.downLimit[pos] != pos){
+            let x = state.robots[2*robot];
+            let y = state.robots[2*robot+1];
+            let pos = x + gridSize*y;
+            if(board.upLimit[pos] != y){
                 let newGameState = new GameState(state);
                 newGameState.Move(board, 1 << (19 - 4*robot));
                 todoStates.push(newGameState);
                 numOfStates++;
             }
 
-            if(board.leftLimit[pos] != pos){
+            if(board.downLimit[pos] != y){
                 let newGameState = new GameState(state);
                 newGameState.Move(board, 1 << (18 - 4*robot));
                 todoStates.push(newGameState);
                 numOfStates++;
             }
 
-            if(board.rightLimit[pos] != pos){
+            if(board.leftLimit[pos] != x){
                 let newGameState = new GameState(state);
                 newGameState.Move(board, 1 << (17 - 4*robot));
+                todoStates.push(newGameState);
+                numOfStates++;
+            }
+
+            if(board.rightLimit[pos] != x){
+                let newGameState = new GameState(state);
+                newGameState.Move(board, 1 << (16 - 4*robot));
                 todoStates.push(newGameState);
                 numOfStates++;
             }

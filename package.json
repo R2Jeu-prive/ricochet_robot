@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "wasm-pack build rust_solver --target web --out-dir ../public/rust_pck && nodemon server.js"
   },
   "repository": {
     "type": "git",

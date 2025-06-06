@@ -9,12 +9,13 @@ const mimeTypes = {
     '.html': 'text/html',
     '.css':  'text/css',
     '.js':   'application/javascript',
+    '.wasm': 'application/wasm',
     '.png':  'image/png',
     '.jpg':  'image/jpeg',
     '.gif':  'image/gif',
     '.svg':  'image/svg+xml',
     '.json': 'application/json',
-    '.ico':  'image/x-icon'
+    '.ico':  'image/x-icon',
 };
 
 const server = http.createServer((req, res) => {

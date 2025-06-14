@@ -90,10 +90,13 @@
     </div>
     <script src="index.js" type="module"></script>
     <script type="module">
-      import init, { greet } from "./rust_pck/rust_solver.js";
+      import init, { set_board } from "./rust_pck/rust_solver.js";
+      import { defaultBoard } from "./constants.js";
+
+      console.log(defaultBoard);
 
       init().then(() => {
-        greet("WebAssembly");
+        set_board({bob:"Yop !", walls: defaultBoard.walls})
       });
     </script>
 </body>

@@ -151,3 +151,28 @@ window.switchMode = switchMode;
 window.playAnimation = playAnimation;
 window.selectGoal = selectGoal;
 
+import init, { set_board } from "./rust_pck/rust_solver.js";
+
+console.log(defaultBoard);
+
+init().then(() => {
+    let b = {}
+    b.goals = [];
+    for (let i = 0; i < 17; i++){
+        b.goals.push(defaultBoard.goals[2*i] + 16*defaultBoard.goals[2*i+1]);
+    }
+
+    b.walls = [];
+    for(let x = 0; x < 16; x++){
+        for(let y = 0; y < 16; y++){
+            let v = 0;
+            if(defaultBoard.walls.some(w => w.x == x && w.y == y && w.type == 0)){ v += 2; }
+            if(defaultBoard.walls.some(w => w.x == x && w.y == y && w.type == 1)){ v += 1; }
+            b.walls[x + 16*y] = v
+        }
+    }
+
+    console.log(b);
+    set_board(b)
+});
+
